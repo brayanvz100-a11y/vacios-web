@@ -67,7 +67,7 @@ function App() {
   const iniciarSesion = async () => {
     if (!usuarioInput || !claveInput) return mostrarNotificacion("Ingresa tus credenciales", "error");
     try {
-      const respuesta = await fetch('http://localhost:5000/api/login', {
+      const respuesta = await fetch('https://nexus-backend-polar.onrender.com/api/login', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: usuarioInput, password: claveInput })
       });
       const data = await respuesta.json();
@@ -85,9 +85,9 @@ function App() {
     try {
       const config = { headers: { 'Authorization': `Bearer ${tokenUsuario}` } }; 
       const [resC, resP, resH] = await Promise.all([
-        fetch('http://localhost:5000/api/clientes', config),
-        fetch('http://localhost:5000/api/productos', config),
-        fetch('http://localhost:5000/api/transacciones', config)
+        fetch('https://nexus-backend-polar.onrender.com/api/clientes', config),
+        fetch('https://nexus-backend-polar.onrender.com/api/productos', config),
+        fetch('https://nexus-backend-polar.onrender.com/api/transacciones', config)
       ]);
       if (resC.ok) setClientes(await resC.json());
       if (resP.ok) setProductos(await resP.json());
@@ -114,7 +114,7 @@ function App() {
     if (!clienteSeleccionado || !productoSeleccionado || (numCajas === 0 && numVacios === 0 && numPagadoUsd === 0)) 
       return mostrarNotificacion("Complete todos los campos", "error");
     try {
-      const respuesta = await fetch('http://localhost:5000/api/transacciones', {
+      const respuesta = await fetch('https://nexus-backend-polar.onrender.com/api/transacciones', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenUsuario}` },
         body: JSON.stringify({ cliente_id: clienteSeleccionado, producto_id: productoSeleccionado, cajas_despachadas: numCajas, vacios_recibidos: numVacios, monto_pagado_usd: numPagadoUsd, tasa_bcv: tasaBcv })
       });
@@ -145,7 +145,7 @@ function App() {
   const eliminarTransaccion = async (id) => {
     if (!window.confirm("¿Seguro que deseas ELIMINAR esta venta?")) return;
     try {
-      const respuesta = await fetch(`http://localhost:5000/api/transacciones/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${tokenUsuario}` } });
+      const respuesta = await fetch(`https://nexus-backend-polar.onrender.com/api/transacciones/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${tokenUsuario}` } });
       if (respuesta.ok) { cargarDatos(); mostrarNotificacion("Registro eliminado", "success"); }
     } catch (e) {}
   }
@@ -153,7 +153,7 @@ function App() {
   const iniciarEdicion = (viaje) => { setEditandoId(viaje.id); setEditCajas(viaje.cajas_despachadas); setEditVacios(viaje.vacios_recibidos); setEditPagado(viaje.monto_pagado_usd); }
   const guardarEdicion = async (id) => {
     try {
-      const respuesta = await fetch(`http://localhost:5000/api/transacciones/${id}`, {
+      const respuesta = await fetch(`https://nexus-backend-polar.onrender.com/api/transacciones/${id}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenUsuario}` },
         body: JSON.stringify({ cajas_despachadas: editCajas, vacios_recibidos: editVacios, monto_pagado_usd: editPagado })
       });
@@ -163,11 +163,11 @@ function App() {
 
   const registrarNuevoCliente = async () => { 
     if (!nuevoNombreCliente.trim()) return;
-    try { const res = await fetch('http://localhost:5000/api/clientes', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenUsuario}` }, body: JSON.stringify({ nombre: nuevoNombreCliente }) }); if (res.ok) { setNuevoNombreCliente(''); cargarDatos(); mostrarNotificacion("Registrado", "success"); } } catch (e) {}
+    try { const res = await fetch('https://nexus-backend-polar.onrender.com/api/clientes', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenUsuario}` }, body: JSON.stringify({ nombre: nuevoNombreCliente }) }); if (res.ok) { setNuevoNombreCliente(''); cargarDatos(); mostrarNotificacion("Registrado", "success"); } } catch (e) {}
   }
   const registrarNuevoChofer = async () => { 
     if (!nuevoChoferUser.trim() || !nuevoChoferPass.trim()) return;
-    try { const res = await fetch('http://localhost:5000/api/usuarios', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenUsuario}` }, body: JSON.stringify({ username: nuevoChoferUser, password: nuevoChoferPass }) }); if (res.ok) { setNuevoChoferUser(''); setNuevoChoferPass(''); mostrarNotificacion("Operador creado", "success"); } } catch (e) {}
+    try { const res = await fetch('https://nexus-backend-polar.onrender.com/api/usuarios', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenUsuario}` }, body: JSON.stringify({ username: nuevoChoferUser, password: nuevoChoferPass }) }); if (res.ok) { setNuevoChoferUser(''); setNuevoChoferPass(''); mostrarNotificacion("Operador creado", "success"); } } catch (e) {}
   }
 
   const clientesFiltrados = clientes.filter(c => c.nombre.toLowerCase().includes(busquedaCliente.toLowerCase()));
